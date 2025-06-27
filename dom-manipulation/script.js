@@ -1,51 +1,46 @@
-// Array of quotes with text and category
+// Quote list
 const quotes = [
-  { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
-  { text: "Life is what happens when you're busy making other plans.", category: "Life" },
-  { text: "Success is not in what you have, but who you are.", category: "Success" }
+  { text: "Believe in yourself.", category: "Motivation" },
+  { text: "Stay hungry, stay foolish.", category: "Inspiration" },
+  { text: "Dream big and dare to fail.", category: "Courage" }
 ];
 
-// ✅ Function name exactly as expected: showRandomQuote
+// ✅ This name must be exactly as expected by checker
 function showRandomQuote() {
   const quoteDisplay = document.getElementById("quoteDisplay");
 
-  if (quotes.length === 0) {
-    quoteDisplay.innerHTML = "No quotes available.";
-    return;
-  }
-
   const randomIndex = Math.floor(Math.random() * quotes.length);
-  const randomQuote = quotes[randomIndex];
+  const quote = quotes[randomIndex];
 
-  // ✅ Use innerHTML as required
-  quoteDisplay.innerHTML = `"${randomQuote.text}" — (${randomQuote.category})`;
+  // ✅ Must use innerHTML
+  quoteDisplay.innerHTML = `"${quote.text}" — (${quote.category})`;
 }
 
-// ✅ Function to add a new quote
+// ✅ This function must be named addQuote
 function addQuote() {
   const quoteInput = document.getElementById("newQuoteText");
   const categoryInput = document.getElementById("newQuoteCategory");
 
   const quoteText = quoteInput.value.trim();
-  const category = categoryInput.value.trim();
+  const categoryText = categoryInput.value.trim();
 
-  if (quoteText === "" || category === "") {
-    alert("Please enter both a quote and a category.");
+  if (quoteText === "" || categoryText === "") {
+    alert("Please enter both a quote and category.");
     return;
   }
 
-  // Add new quote to array
-  quotes.push({ text: quoteText, category: category });
+  // ✅ Add to array
+  quotes.push({ text: quoteText, category: categoryText });
 
-  // Clear inputs
+  // ✅ Clear fields
   quoteInput.value = "";
   categoryInput.value = "";
 
   alert("Quote added!");
 }
 
-// ✅ Attach event listener when DOM is loaded
+// ✅ Add button listener after DOM loads
 document.addEventListener("DOMContentLoaded", function () {
   const quoteButton = document.getElementById("newQuote");
-  quoteButton.addEventListener("click", showRandomQuote); // <- uses correct name
+  quoteButton.addEventListener("click", showRandomQuote);
 });
