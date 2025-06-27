@@ -137,16 +137,15 @@ function showNotification(msg) {
 }
 
 // ✅ Required by checker: fetch quotes from the simulated server
-function fetchQuotesFromServer() {
-  return fetch(SERVER_URL)
-    .then(response => response.json())
-    .then(data => {
-      return data.slice(0, 5).map(post => ({
-        text: post.title,
-        category: "Server"
-      }));
-    });
+async function fetchQuotesFromServer() {
+  const response = await fetch(SERVER_URL);
+  const data = await response.json();
+  return data.slice(0, 5).map(post => ({
+    text: post.title,
+    category: "Server"
+  }));
 }
+
 
 // Sync local quotes with server quotes
 function syncWithServer() {
