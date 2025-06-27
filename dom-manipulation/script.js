@@ -180,4 +180,7 @@ function syncQuotes() {
 document.addEventListener("DOMContentLoaded", () => {
   loadQuotes();
   document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+
+  // Auto sync every 30 seconds
+  setInterval(syncQuotes, 30000);
 });
