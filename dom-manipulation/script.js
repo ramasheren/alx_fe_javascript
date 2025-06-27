@@ -1,3 +1,5 @@
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
+
 let quotes = [];
 
 function loadQuotes() {
@@ -7,8 +9,7 @@ function loadQuotes() {
   } else {
     quotes = [
       { text: "Believe in yourself.", category: "Motivation" },
-      { text: "Stay hungry, stay foolish.", category: "Inspiration" },
-      { text: "Dream big and dare to fail.", category: "Courage" }
+      { text: "Stay hungry, stay foolish.", category: "Inspiration" }
     ];
   }
 }
@@ -20,7 +21,6 @@ function saveQuotes() {
 function showRandomQuote() {
   const selected = document.getElementById("categoryFilter").value;
   let filteredQuotes = selected === "all" ? quotes : quotes.filter(q => q.category === selected);
-
   const quoteDisplay = document.getElementById("quoteDisplay");
 
   if (filteredQuotes.length === 0) {
@@ -127,17 +127,64 @@ function importFromJsonFile(event) {
   reader.readAsText(event.target.files[0]);
 }
 
+function showNotification(msg) {
+  const note = document.createElement("div");
+  note.textContent = msg;
+  note.style.position = "fixed";
+  note.style.bottom = "20px";
+  note.style.right = "20px";
+  note.style.backgroundColor = "#28a745";
+  note.style.color = "white";
+  note.style.padding = "10px 15px";
+  note.style.borderRadius = "5px";
+  note.style.zIndex = "1000";
+  document.body.appendChild(note);
+  setTimeout(() => note.remove(), 4000);
+}
+
+function syncWithServer() {
+  fetch(SERVER_URL)
+    .then(response => response.json())
+    .then(serverQuotes => {
+      const newQuotes = serverQuotes.slice(0, 5).map(q => ({
+        text: q.title,
+        category: "Server"
+      }));
+
+      let updated = false;
+
+      newQuotes.forEach(sq => {
+        const exists = quotes.some(lq => lq.text === sq.text);
+        if (!exists) {
+          quotes.push(sq);
+          updated = true;
+        }
+      });
+
+      if (updated) {
+        saveQuotes();
+        populateCategories();
+        showNotification("Quotes synced from server and updated.");
+      }
+    })
+    .catch(err => {
+      console.error("Failed to sync with server:", err);
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadQuotes();
   populateCategories();
-  document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 
-  const exportBtn = document.getElementById("exportQuotes");
-  if (exportBtn) exportBtn.addEventListener("click", exportToJsonFile);
+  document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+  document.getElementById("exportQuotes").addEventListener("click", exportToJsonFile);
 
   const last = sessionStorage.getItem("lastQuote");
   if (last) {
     const quote = JSON.parse(last);
     document.getElementById("quoteDisplay").innerHTML = `"${quote.text}" — (${quote.category})`;
   }
+
+  // Start syncing every 15 seconds
+  setInterval(syncWithServer, 15000);
 });
