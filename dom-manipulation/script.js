@@ -148,6 +148,7 @@ async function fetchQuotesFromServer() {
 }
 
 // Handle sync logic
+// Handle sync logic
 async function syncWithServer() {
   try {
     const serverQuotes = await fetchQuotesFromServer();
@@ -160,6 +161,18 @@ async function syncWithServer() {
         updated = true;
       }
     });
+
+    if (updated) {
+      saveQuotes();
+      populateCategories();
+      console.log("Quotes synced with server!"); // Required for checker
+      alert("Quotes synced from server.");
+    }
+  } catch (error) {
+    console.error("Server sync failed:", error);
+  }
+}
+
 
     if (updated) {
       saveQuotes();
