@@ -40,6 +40,27 @@ function showRandomQuote() {
 }
 
 // Add new quote from form input
+async function sendQuoteToServer(quote) {
+  try {
+    const response = await fetch(SERVER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(quote)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server responded with status: ${response.status}`);
+    }
+
+    console.log("Quote sent to server successfully.");
+  } catch (error) {
+    console.error("Failed to send quote to server:", error);
+  }
+}
+
+
 function addQuote() {
   const text = document.getElementById("newQuoteText").value.trim();
   const category = document.getElementById("newQuoteCategory").value.trim();
@@ -48,6 +69,22 @@ function addQuote() {
     alert("Please enter both quote and category.");
     return;
   }
+
+  const newQuote = { text, category };
+
+  quotes.push(newQuote);
+  saveQuotes();
+  populateCategories();
+
+  // ✅ Send to server (simulated)
+  sendQuoteToServer(newQuote);
+
+  document.getElementById("newQuoteText").value = "";
+  document.getElementById("newQuoteCategory").value = "";
+
+  alert("Quote added!");
+}
+
 
   quotes.push({ text, category });
   saveQuotes();
